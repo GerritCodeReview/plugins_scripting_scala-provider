@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "65bf338d_89f459f7",
+        "filename": "src/main/resources/Documentation/about.md",
+        "patchSetId": 4
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1010737
+      },
+      "writtenOn": "2014-04-22T00:27:14Z",
+      "side": 1,
+      "message": "I note the dependencies use Scala 2.10.3, 2.10.4 and 2.11.0 were just released.  Maybe we should mention that the plugin only supports 2.10.x.\n\nOr should we update it to 2.11 ( and also mention 2.11 is used/supported ).",
+      "revId": "5ed26be1a14cc186aed98da41aca1e9c18be17ca",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    }
+  ]
+}
