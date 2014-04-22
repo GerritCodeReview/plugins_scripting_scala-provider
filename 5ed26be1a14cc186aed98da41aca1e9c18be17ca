@@ -52,6 +52,29 @@
       "revId": "5ed26be1a14cc186aed98da41aca1e9c18be17ca",
       "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8558a770_3afe61d6",
+        "filename": "src/main/resources/Documentation/about.md",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1011323
+      },
+      "writtenOn": "2014-04-22T07:57:49Z",
+      "side": 1,
+      "message": "Looks like more than one place were borrowed from Groovy provider and wasn\u0027t updates ;-) But you can reference to gerrit-scala-plugin, if you want: [2].\n\n [2] https://github.com/davido/gerrit-scala-plugin",
+      "range": {
+        "startLine": 7,
+        "startChar": 34,
+        "endLine": 7,
+        "endChar": 36
+      },
+      "revId": "5ed26be1a14cc186aed98da41aca1e9c18be17ca",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
     }
   ]
 }
