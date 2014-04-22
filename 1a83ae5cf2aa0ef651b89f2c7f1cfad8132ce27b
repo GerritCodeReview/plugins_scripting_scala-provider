@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8558a770_ba11d175",
+        "filename": "BUCK",
+        "patchSetId": 5
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1011323
+      },
+      "writtenOn": "2014-04-22T08:17:39Z",
+      "side": 1,
+      "message": "I think for this to work the license file must be in Gerrit core. Or Buck tool chain must be extended to support licenses from plugins. I would just use Apache 2 for now, and put FixMe comment or some such.",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 30
+      },
+      "revId": "1a83ae5cf2aa0ef651b89f2c7f1cfad8132ce27b",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a5492ba6_7bf8dfe6",
+        "filename": "LICENSE",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1011323
+      },
+      "writtenOn": "2014-04-22T08:17:39Z",
+      "side": 1,
+      "message": "I think, you don\u0027t need this file.",
+      "revId": "1a83ae5cf2aa0ef651b89f2c7f1cfad8132ce27b",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    }
+  ]
+}
