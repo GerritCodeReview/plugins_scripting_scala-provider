@@ -16,6 +16,24 @@
       "revId": "5ed26be1a14cc186aed98da41aca1e9c18be17ca",
       "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8558a770_baea7111",
+        "filename": "src/main/resources/Documentation/about.md",
+        "patchSetId": 4
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1006192
+      },
+      "writtenOn": "2014-04-22T07:36:26Z",
+      "side": 1,
+      "message": "I tried 2.11 but found many bugs on the embedded compiler I am using in this Scala-Provider.\n\nWill eventually go there but for the time being would stay with Scala 2.10.x.\n\nP.S. I forgot the \"Groovy\" wording borrowed by the David\u0027s Groovy provider ;-) will change and update the description.",
+      "parentUuid": "65bf338d_89f459f7",
+      "revId": "5ed26be1a14cc186aed98da41aca1e9c18be17ca",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
     }
   ]
 }
