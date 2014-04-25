@@ -58,10 +58,11 @@ class ScalaPluginProvider implements ServerPluginProvider {
   }
 
   @Override
-  public ServerPlugin get(String name, File srcFile, PluginUser pluginUser,
+  public ServerPlugin get(File srcFile, PluginUser pluginUser,
       FileSnapshot snapshot, String pluginCanonicalWebUrl, File pluginDataDir)
       throws InvalidPluginException {
     ScalaPluginScriptEngine scriptEngine = scriptEngineProvider.get();
+    String name = getPluginName(srcFile);
     return new ServerPlugin(name, pluginCanonicalWebUrl, pluginUser, srcFile,
         snapshot, new ScalaPluginScanner(name, srcFile, scriptEngine),
         pluginDataDir, scriptEngine.getClassLoader());

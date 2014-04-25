@@ -13,6 +13,7 @@
 // limitations under the License.
 package com.googlesource.gerrit.plugins.scripting.scala;
 
+import com.google.common.base.Optional;
 import com.google.gerrit.server.plugins.AbstractPreloadedPluginScanner;
 import com.google.gerrit.server.plugins.InvalidPluginException;
 import com.google.gerrit.server.plugins.Plugin;
@@ -53,14 +54,14 @@ public class ScalaPluginScanner extends AbstractPreloadedPluginScanner {
   }
 
   @Override
-  public <T> T getResource(String resourcePath, Class<? extends T> resourceClass) {
-    return null;
+  public <T> Optional<T> getResource(String resourcePath, Class<? extends T> resourceClass) {
+    return Optional.absent();
   }
 
   @Override
-  public InputStream getResourceInputStream(String resourcePath)
+  public Optional<InputStream> getResourceInputStream(String resourcePath)
       throws IOException {
-    return null;
+    return Optional.absent();
   }
 
   @Override
