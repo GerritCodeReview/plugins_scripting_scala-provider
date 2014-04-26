@@ -37,6 +37,7 @@ public class ScalaSettings {
     settings.exposeEmptyPackage().tryToSetFromPropertyValue("true");
     settings.Ylogcp().tryToSetFromPropertyValue(CLASSPATH_DEBUG);
     settings.verbose().tryToSetFromPropertyValue(VERBOSE_COMPILE_OUTPUT);
+    settings.feature().tryToSetFromPropertyValue("true");
 
     settings.outputDirs().setSingleOutput(initVirtualDirectory());
     settings.classpath().tryToSetFromPropertyValue(
