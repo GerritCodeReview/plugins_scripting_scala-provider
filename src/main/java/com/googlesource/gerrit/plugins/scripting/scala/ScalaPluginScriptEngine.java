@@ -23,12 +23,14 @@ import org.slf4j.LoggerFactory;
 
 import scala.Char;
 import scala.Option;
+import scala.Tuple2;
 import scala.collection.Iterator;
 import scala.collection.immutable.Seq;
 import scala.collection.mutable.Map;
 import scala.reflect.internal.util.BatchSourceFile;
 import scala.reflect.internal.util.SourceFile;
 import scala.reflect.io.AbstractFile;
+import scala.reflect.io.VirtualDirectory;
 import scala.tools.nsc.Global;
 import scala.tools.nsc.Global.Run;
 
@@ -51,6 +53,7 @@ public class ScalaPluginScriptEngine {
   private ScalaReporter reporter;
 
   public class ScalaClassLoader extends ClassLoader {
+    private static final String CLASS_EXTENSION = ".class";
     private Map<String, AbstractFile> scalaClasses;
 
     public ScalaClassLoader(ScalaSettings settings) {
@@ -62,30 +65,78 @@ public class ScalaPluginScriptEngine {
 
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
-      Option<AbstractFile> classFile = scalaClasses.get(name + ".class");
-      if (classFile.isEmpty()) {
-        throw new ClassNotFoundException("Cannot find Scala class " + name);
-      }
-
+      AbstractFile classFile = getClassFile(name, scalaClasses);
       byte[] ba;
       try {
-        ba = classFile.get().toByteArray();
+        ba = classFile.toByteArray();
         return defineClass(name, ba, 0, ba.length);
       } catch (IOException e) {
         throw new ClassNotFoundException("Cannot open Scala class file "
-            + classFile.get(), e);
+            + classFile, e);
       }
     }
 
+    private AbstractFile getClassFile(String fullClassName,
+        Map<String, AbstractFile> tree) throws ClassNotFoundException {
+      String[] nameComponents = fullClassName.split("\\.");
+      nameComponents[nameComponents.length-1] =
+          nameComponents[nameComponents.length-1] + CLASS_EXTENSION;
+      for (String component : nameComponents) {
+        Option<AbstractFile> node = tree.get(component);
+        if (node.isEmpty()) {
+          throw new ClassNotFoundException(
+              "Cannot find compiled Scala code for class " + fullClassName
+                  + ": " + component + " is unknown");
+        }
+
+        AbstractFile abstractFile = node.get();
+        if (component.endsWith(CLASS_EXTENSION)) {
+          return abstractFile;
+        } else {
+          tree =
+              ((VirtualDirectory) abstractFile)
+                  .scala$reflect$io$VirtualDirectory$$files();
+        }
+      }
+      throw new ClassNotFoundException(
+          "Cannot find compiled Scala code for class " + fullClassName);
+    }
+
     public Set<String> getAllLoadedClassNames() {
+      return scanTree("", scalaClasses);
+    }
+
+    private Set<String> scanTree(String packageName,
+        Map<String, AbstractFile> tree) {
       Set<String> classNames = Sets.newHashSet();
-      for (Iterator<String> keysIter = scalaClasses.keys().iterator(); keysIter
+      for (Iterator<Tuple2<String, AbstractFile>> keysIter = tree.toIterator(); keysIter
           .hasNext();) {
-        String classFileName = keysIter.next();
-        classNames.add(classFileName.substring(0, classFileName.length()
-            - ".class".length()));
+        Tuple2<String, AbstractFile> node = keysIter.next();
+        String fileName = node._1;
+        AbstractFile fileContent = node._2;
+
+        if (fileName.endsWith(CLASS_EXTENSION)) {
+          classNames.add(nameWithPackage(
+              packageName,
+              fileName.substring(0,
+                  fileName.length() - CLASS_EXTENSION.length())));
+
+        } else if (VirtualDirectory.class.isAssignableFrom(fileContent
+            .getClass())) {
+          VirtualDirectory subNode = (VirtualDirectory) node._2;
+          classNames.addAll(scanTree(nameWithPackage(packageName, fileName),
+              subNode.scala$reflect$io$VirtualDirectory$$files()));
+        }
       }
       return classNames;
+    }
+
+    private String nameWithPackage(String packageName, String packageMember) {
+      if (packageName.length() <= 0) {
+        return packageMember;
+      } else {
+        return packageName + "." + packageMember;
+      }
     }
   }
 
