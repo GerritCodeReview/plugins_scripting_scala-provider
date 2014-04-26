@@ -48,7 +48,7 @@ import java.io.File;
  */
 @Singleton
 class ScalaPluginProvider implements ServerPluginProvider {
-  private static final String SCALA_EXTENSION = ".scala";
+  public static final String SCALA_EXTENSION = ".scala";
 
   private final Provider<ScalaPluginScriptEngine> scriptEngineProvider;
 

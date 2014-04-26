@@ -15,6 +15,8 @@ package com.googlesource.gerrit.plugins.scripting.scala;
 
 import static scala.collection.JavaConversions.asScalaBuffer;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
@@ -38,8 +40,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.FileVisitOption;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
@@ -151,21 +160,62 @@ public class ScalaPluginScriptEngine {
 
   public Set<Class<?>> eval(File scalaFile) throws IOException,
       ClassNotFoundException {
+    if (scalaFile.isFile()) {
+      return evalFiles(Arrays.asList(scalaFile));
+    } else if (scalaFile.isDirectory()) {
+      return evalDirectory(scalaFile);
+    } else {
+      throw new IOException("File " + scalaFile
+          + " is not a supported for loading Scala scripts");
+    }
+  }
+
+  private Set<Class<?>> evalDirectory(File scalaFile) throws IOException,
+      ClassNotFoundException {
+    final List<File> scalaFiles = Lists.newArrayList();
+
+    Files.walkFileTree(scalaFile.toPath(),
+        EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,
+        new SimpleFileVisitor<Path>() {
+          @Override
+          public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
+              throws IOException {
+            File file = path.toFile();
+            String fileName = file.getName();
+            if (file.isFile() && fileName.endsWith(ScalaPluginProvider.SCALA_EXTENSION)) {
+              scalaFiles.add(file);
+            }
+            return FileVisitResult.CONTINUE;
+          }
+        });
+    return evalFiles(scalaFiles);
+  }
+
+  private Set<Class<?>> evalFiles(List<File> scalaFiles) throws IOException,
+      ClassNotFoundException {
     Set<Class<?>> classes = Sets.newHashSet();
 
-    SourceFile sourceFile =
-        new BatchSourceFile(scalaFile.getName(), readScalaFile(scalaFile));
+    List<SourceFile> scalaSourceFiles = Lists.transform(scalaFiles, new Function<File,SourceFile>() {
+      @Override
+      public SourceFile apply(File scalaFile) {
+        try {
+          return new BatchSourceFile(scalaFile.getName(), readScalaFile(scalaFile));
+        } catch (IOException e) {
+          throw new IllegalArgumentException("Cannot load scala file " + scalaFile, e);
+        }
+      }
+    });
     Run run = globalEngine.new Run();
     reporter.reset();
-    run.compileSources(asScalaBuffer(Arrays.asList(sourceFile)).toList());
+    run.compileSources(asScalaBuffer(scalaSourceFiles).toList());
     if (reporter.hasErrors()) {
-      LOG.error("Error compiling scala file " + scalaFile);
+      LOG.error("Error compiling scala files " + scalaFiles);
       LOG.error(reporter.getOutput());
-      throw new IOException("Invalid Scala file " + scalaFile);
+      throw new IOException("Invalid Scala files " + scalaFiles);
     } else {
       String output = reporter.getOutput();
       if(output.length() > 0) {
-        LOG.info("Scala file " + scalaFile + " loaded successfully");
+        LOG.info("Scala files " + scalaFiles + " loaded successfully");
         LOG.info(output);
       }
     }
