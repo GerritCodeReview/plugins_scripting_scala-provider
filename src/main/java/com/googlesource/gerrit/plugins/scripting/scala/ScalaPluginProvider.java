@@ -14,7 +14,6 @@
 
 package com.googlesource.gerrit.plugins.scripting.scala;
 
-import com.google.gerrit.server.PluginUser;
 import com.google.gerrit.server.plugins.InvalidPluginException;
 import com.google.gerrit.server.plugins.ServerPlugin;
 import com.google.gerrit.server.plugins.ServerPluginProvider;
@@ -58,14 +57,14 @@ class ScalaPluginProvider implements ServerPluginProvider {
   }
 
   @Override
-  public ServerPlugin get(File srcFile, PluginUser pluginUser,
-      FileSnapshot snapshot, String pluginCanonicalWebUrl, File pluginDataDir)
+  public ServerPlugin get(File srcFile,
+      FileSnapshot snapshot, PluginDescription description)
       throws InvalidPluginException {
     ScalaPluginScriptEngine scriptEngine = scriptEngineProvider.get();
     String name = getPluginName(srcFile);
-    return new ServerPlugin(name, pluginCanonicalWebUrl, pluginUser, srcFile,
+    return new ServerPlugin(name, description.canonicalUrl, description.user, srcFile,
         snapshot, new ScalaPluginScanner(name, srcFile, scriptEngine),
-        pluginDataDir, scriptEngine.getClassLoader());
+        description.dataDir, scriptEngine.getClassLoader());
   }
 
   @Override
