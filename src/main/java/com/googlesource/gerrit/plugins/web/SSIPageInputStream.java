@@ -13,9 +13,10 @@
 // limitations under the License.
 package com.googlesource.gerrit.plugins.web;
 
-import java.io.File;
 import java.io.FilterInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Stack;
 
 public class SSIPageInputStream extends FilterInputStream {
@@ -25,11 +26,11 @@ public class SSIPageInputStream extends FilterInputStream {
 
   private LookAheadFileInputStream currentIs;
   private Stack<LookAheadFileInputStream> fileInputStreamStack;
-  private final File basePath;
+  private final Path basePath;
 
-  public SSIPageInputStream(File basePath, String filePath)
+  public SSIPageInputStream(Path basePath, String filePath)
       throws IOException {
-    super(new LookAheadFileInputStream(new File(basePath, filePath)));
+    super(new LookAheadFileInputStream(basePath.resolve(filePath)));
 
     this.basePath = basePath;
     this.fileInputStreamStack = new Stack<>();
@@ -60,8 +61,8 @@ public class SSIPageInputStream extends FilterInputStream {
 
   private void push(String includeFileName) throws IOException {
     fileInputStreamStack.push(currentIs);
-    File inputFile = getFile(includeFileName);
-    if (!inputFile.exists()) {
+    Path inputFile = getFile(includeFileName);
+    if (!Files.exists(inputFile)) {
       throw new IOException("Cannot find file '" + includeFileName
           + "' included in " + currentIs.getFileName() + ":"
           + currentIs.getLineNr());
@@ -70,11 +71,11 @@ public class SSIPageInputStream extends FilterInputStream {
     in = currentIs;
   }
 
-  private File getFile(String includeFileName) {
+  private Path getFile(String includeFileName) {
     if (includeFileName.startsWith("/")) {
-      return new File(basePath, includeFileName);
+      return basePath.resolve(includeFileName);
     } else {
-      return new File(currentIs.getCurrentDir(), includeFileName);
+      return currentIs.getCurrentDir().resolve(includeFileName);
     }
   }
 
@@ -110,10 +111,12 @@ public class SSIPageInputStream extends FilterInputStream {
     }
   }
 
+  @Override
   public int read(byte b[]) throws IOException {
     return read(b, 0, b.length);
   }
 
+  @Override
   public int read(byte b[], int off, int len) throws IOException {
     if (b == null) {
       throw new NullPointerException();

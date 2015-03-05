@@ -24,7 +24,7 @@ import com.google.inject.Singleton;
 
 import org.eclipse.jgit.internal.storage.file.FileSnapshot;
 
-import java.io.File;
+import java.nio.file.Path;
 
 /**
  * Scala scripting plugins.
@@ -62,7 +62,7 @@ class ScalaPluginProvider implements ServerPluginProvider {
   }
 
   @Override
-  public ServerPlugin get(File srcFile,
+  public ServerPlugin get(Path srcFile,
       FileSnapshot snapshot, PluginDescription description)
       throws InvalidPluginException {
     ScalaPluginScriptEngine scriptEngine = scriptEngineProvider.get();
@@ -73,13 +73,13 @@ class ScalaPluginProvider implements ServerPluginProvider {
   }
 
   @Override
-  public boolean handles(File srcFile) {
-    return srcFile.getName().toLowerCase().endsWith(SCALA_EXTENSION);
+  public boolean handles(Path srcFile) {
+    return srcFile.toString().toLowerCase().endsWith(SCALA_EXTENSION);
   }
 
   @Override
-  public String getPluginName(File srcFile) {
-    String srcFileName = srcFile.getName();
+  public String getPluginName(Path srcFile) {
+    String srcFileName = srcFile.getFileName().toString();
     int endPos = srcFileName.lastIndexOf('-');
     if (endPos == -1) {
       endPos = srcFileName.lastIndexOf('.');

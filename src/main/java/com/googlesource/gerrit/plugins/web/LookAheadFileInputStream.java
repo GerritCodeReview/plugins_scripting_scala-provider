@@ -14,9 +14,9 @@
 package com.googlesource.gerrit.plugins.web;
 
 import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 class LookAheadFileInputStream extends BufferedInputStream {
@@ -29,14 +29,14 @@ class LookAheadFileInputStream extends BufferedInputStream {
 
   private final String fileExtension;
   private final String fileName;
-  private final File currentDir;
+  private final Path currentDir;
 
-  public LookAheadFileInputStream(File inputFile) throws IOException {
-    super(new FileInputStream(inputFile), BUFFER_SIZE);
+  public LookAheadFileInputStream(Path inputFile) throws IOException {
+    super(Files.newInputStream(inputFile), BUFFER_SIZE);
 
-    fileName = inputFile.getName();
+    fileName = inputFile.getFileName().toString();
     fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1);
-    currentDir = inputFile.getParentFile();
+    currentDir = inputFile.getParent();
   }
 
   @Override
@@ -45,6 +45,7 @@ class LookAheadFileInputStream extends BufferedInputStream {
         + " buffer=\'" + new String(buf, pos, count - pos) + "'";
   }
 
+  @Override
   public synchronized int read() throws IOException {
     lastChar = super.read();
     if (isNewLine()) {
@@ -99,7 +100,7 @@ class LookAheadFileInputStream extends BufferedInputStream {
     return fileName;
   }
 
-  public File getCurrentDir() {
+  public Path getCurrentDir() {
     return currentDir;
   }
 

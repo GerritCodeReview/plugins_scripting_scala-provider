@@ -21,16 +21,16 @@ import com.google.gerrit.server.plugins.PluginEntry;
 
 import com.googlesource.gerrit.plugins.web.WebPluginScanner;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.Set;
 
 public class ScalaPluginScanner extends AbstractPreloadedPluginScanner {
   private final WebPluginScanner webScanner;
 
-  public ScalaPluginScanner(String pluginName, File srcFile,
+  public ScalaPluginScanner(String pluginName, Path srcFile,
       ScalaPluginScriptEngine scriptEngine) throws InvalidPluginException {
     super(pluginName, getPluginVersion(srcFile), loadScriptClasses(srcFile,
         scriptEngine), Plugin.ApiType.PLUGIN);
@@ -38,8 +38,8 @@ public class ScalaPluginScanner extends AbstractPreloadedPluginScanner {
     this.webScanner = new WebPluginScanner(srcFile);
   }
 
-  private static String getPluginVersion(File srcFile) {
-    String srcFileName = srcFile.getName();
+  private static String getPluginVersion(Path srcFile) {
+    String srcFileName = srcFile.getFileName().toString();
     int startPos = srcFileName.lastIndexOf('-');
     if (startPos == -1) {
       return "0";
@@ -48,7 +48,7 @@ public class ScalaPluginScanner extends AbstractPreloadedPluginScanner {
     return srcFileName.substring(startPos + 1, endPos);
   }
 
-  private static Set<Class<?>> loadScriptClasses(File srcFile,
+  private static Set<Class<?>> loadScriptClasses(Path srcFile,
       ScalaPluginScriptEngine scriptEngine) throws InvalidPluginException {
     try {
       return scriptEngine.eval(srcFile);
@@ -58,14 +58,17 @@ public class ScalaPluginScanner extends AbstractPreloadedPluginScanner {
     }
   }
 
-  public Optional<PluginEntry> getEntry(String resourcePath) {
+  @Override
+  public Optional<PluginEntry> getEntry(String resourcePath) throws IOException {
     return webScanner.getEntry(resourcePath);
   }
 
+  @Override
   public InputStream getInputStream(PluginEntry entry) throws IOException {
     return webScanner.getInputStream(entry);
   }
 
+  @Override
   public Enumeration<PluginEntry> entries() {
     return webScanner.entries();
   }

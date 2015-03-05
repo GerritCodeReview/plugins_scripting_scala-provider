@@ -20,8 +20,6 @@ import com.google.gerrit.server.plugins.PluginContentScanner;
 import com.google.gerrit.server.plugins.PluginEntry;
 import com.google.inject.Inject;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -39,10 +37,10 @@ import java.util.Map;
 import java.util.jar.Manifest;
 
 public class WebPluginScanner implements PluginContentScanner {
-  private final File staticResourcesPath;
+  private final Path staticResourcesPath;
 
   @Inject
-  public WebPluginScanner(File rootDir) {
+  public WebPluginScanner(Path rootDir) {
     this.staticResourcesPath = rootDir;
   }
 
@@ -59,32 +57,33 @@ public class WebPluginScanner implements PluginContentScanner {
   }
 
   @Override
-  public Optional<PluginEntry> getEntry(String resourcePath) {
-    File resourceFile = getResourceFile(resourcePath);
-    if (resourceFile.exists() && resourceFile.length() > 0) {
+  public Optional<PluginEntry> getEntry(String resourcePath) throws IOException {
+    Path resourceFile = getResourceFile(resourcePath);
+    if (Files.exists(resourceFile) && Files.size(resourceFile) > 0) {
       return resourceOf(resourcePath);
     } else {
       return Optional.absent();
     }
   }
 
-  private Optional<PluginEntry> resourceOf(String resourcePath) {
-    File file = getResourceFile(resourcePath);
-    if (file.exists() && file.length() > 0) {
+  private Optional<PluginEntry> resourceOf(String resourcePath) throws IOException {
+    Path file = getResourceFile(resourcePath);
+    long fileSize = Files.size(file);
+    if (Files.exists(file) && fileSize > 0) {
+      long fileLastModifiedTimeMillis = Files.getLastModifiedTime(file).toMillis();
       if (resourcePath.endsWith("html")) {
-        return Optional.of(new PluginEntry(resourcePath, file.lastModified()));
+        return Optional.of(new PluginEntry(resourcePath, fileLastModifiedTimeMillis));
       } else {
-        return Optional.of(new PluginEntry(resourcePath, file.lastModified(),
-            Optional.of(file.length())));
+        return Optional.of(new PluginEntry(resourcePath, fileLastModifiedTimeMillis,
+            Optional.of(fileSize)));
       }
     } else {
       return Optional.absent();
     }
   }
 
-  private File getResourceFile(String resourcePath) {
-    File resourceFile = new File(staticResourcesPath, resourcePath);
-    return resourceFile;
+  private Path getResourceFile(String resourcePath) {
+    return staticResourcesPath.resolve(resourcePath);
   }
 
   @Override
@@ -94,7 +93,7 @@ public class WebPluginScanner implements PluginContentScanner {
     if(name.endsWith("html")) {
       return new SSIPageInputStream(staticResourcesPath, name);
     } else {
-    return new FileInputStream(getResourceFile(name));
+    return Files.newInputStream(getResourceFile(name));
     }
   }
 
@@ -102,10 +101,10 @@ public class WebPluginScanner implements PluginContentScanner {
   public Enumeration<PluginEntry> entries() {
     final List<PluginEntry> resourcesList = Lists.newArrayList();
     try {
-      Files.walkFileTree(staticResourcesPath.toPath(),
+      Files.walkFileTree(staticResourcesPath,
           EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,
           new SimpleFileVisitor<Path>() {
-            private int basicPathLength = staticResourcesPath.getAbsolutePath()
+            private int basicPathLength = staticResourcesPath.toAbsolutePath().toString()
                 .length();
 
             @Override

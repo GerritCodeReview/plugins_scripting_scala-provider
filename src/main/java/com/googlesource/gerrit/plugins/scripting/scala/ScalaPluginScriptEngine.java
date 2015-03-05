@@ -16,6 +16,7 @@ package com.googlesource.gerrit.plugins.scripting.scala;
 import static scala.collection.JavaConversions.asScalaBuffer;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -36,10 +37,8 @@ import scala.reflect.io.VirtualDirectory;
 import scala.tools.nsc.Global;
 import scala.tools.nsc.Global.Run;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -158,11 +157,11 @@ public class ScalaPluginScriptEngine {
     this.reporter = reporter;
   }
 
-  public Set<Class<?>> eval(File scalaFile) throws IOException,
+  public Set<Class<?>> eval(Path scalaFile) throws IOException,
       ClassNotFoundException {
-    if (scalaFile.isFile()) {
+    if (Files.isRegularFile(scalaFile)) {
       return evalFiles(Arrays.asList(scalaFile));
-    } else if (scalaFile.isDirectory()) {
+    } else if (Files.isDirectory(scalaFile)) {
       return evalDirectory(scalaFile);
     } else {
       throw new IOException("File " + scalaFile
@@ -170,20 +169,19 @@ public class ScalaPluginScriptEngine {
     }
   }
 
-  private Set<Class<?>> evalDirectory(File scalaFile) throws IOException,
+  private Set<Class<?>> evalDirectory(Path scalaFile) throws IOException,
       ClassNotFoundException {
-    final List<File> scalaFiles = Lists.newArrayList();
+    final List<Path> scalaFiles = Lists.newArrayList();
 
-    Files.walkFileTree(scalaFile.toPath(),
+    Files.walkFileTree(scalaFile,
         EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,
         new SimpleFileVisitor<Path>() {
           @Override
           public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
               throws IOException {
-            File file = path.toFile();
-            String fileName = file.getName();
-            if (file.isFile() && fileName.endsWith(ScalaPluginProvider.SCALA_EXTENSION)) {
-              scalaFiles.add(file);
+            String fileName = path.getFileName().toString();
+            if (Files.isRegularFile(path) && fileName.endsWith(ScalaPluginProvider.SCALA_EXTENSION)) {
+              scalaFiles.add(path);
             }
             return FileVisitResult.CONTINUE;
           }
@@ -191,15 +189,15 @@ public class ScalaPluginScriptEngine {
     return evalFiles(scalaFiles);
   }
 
-  private Set<Class<?>> evalFiles(List<File> scalaFiles) throws IOException,
+  private Set<Class<?>> evalFiles(List<Path> scalaFiles) throws IOException,
       ClassNotFoundException {
     Set<Class<?>> classes = Sets.newHashSet();
 
-    List<SourceFile> scalaSourceFiles = Lists.transform(scalaFiles, new Function<File,SourceFile>() {
+    List<SourceFile> scalaSourceFiles = Lists.transform(scalaFiles, new Function<Path,SourceFile>() {
       @Override
-      public SourceFile apply(File scalaFile) {
+      public SourceFile apply(Path scalaFile) {
         try {
-          return new BatchSourceFile(scalaFile.getName(), readScalaFile(scalaFile));
+          return new BatchSourceFile(scalaFile.toString(), readScalaFile(scalaFile));
         } catch (IOException e) {
           throw new IllegalArgumentException("Cannot load scala file " + scalaFile, e);
         }
@@ -227,20 +225,11 @@ public class ScalaPluginScriptEngine {
     return classes;
   }
 
-  private Seq<Object> readScalaFile(File scalaFile) throws IOException {
-    BufferedReader reader = new BufferedReader(new FileReader(scalaFile));
-    StringBuilder scalaCode = new StringBuilder();
-    try {
-      String line;
-      while (null != (line = reader.readLine())) {
-        scalaCode.append(line);
-        scalaCode.append("\n");
-      }
-    } finally {
-      reader.close();
-    }
+  private Seq<Object> readScalaFile(Path scalaFile) throws IOException {
+    List<String> scalaFileLines = Files.readAllLines(scalaFile, Charset.forName("UTF-8"));
+    String scalaCode = Joiner.on('\n').join(scalaFileLines);
 
-    List<Object> chars = new ArrayList<Object>();
+    List<Object> chars = new ArrayList<>();
     for (char c : scalaCode.toString().toCharArray()) {
       chars.add(Char.unbox(c));
     }
