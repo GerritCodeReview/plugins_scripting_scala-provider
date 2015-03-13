@@ -21,8 +21,8 @@ gerrit_plugin(
 
 maven_jar(
   name = 'scala-compiler',
-  id = 'org.scala-lang:scala-compiler:2.11.4',
-  sha1 = 'fa6eaeeecc9c6080d4b2f407f207339f2ff97ad7',
+  id = 'org.scala-lang:scala-compiler:2.11.6',
+  sha1 = 'fa7d8a52d53c6571bce334b2c1d3d9546314dde3',
   license = 'Apache2.0',
   deps = [
     ':scala-reflect',
@@ -31,8 +31,8 @@ maven_jar(
 
 maven_jar(
   name = 'scala-reflect',
-  id = 'org.scala-lang:scala-reflect:2.11.4',
-  sha1 = 'a212daed62de3d47034ea171dd3168a4dd85d08c',
+  id = 'org.scala-lang:scala-reflect:2.11.6',
+  sha1 = 'f539c9c9cf312472b3a7771ac85ecda859657a1d',
   license = 'Apache2.0',
   deps = [
     ':scala-library',
@@ -41,7 +41,7 @@ maven_jar(
 
 maven_jar(
   name = 'scala-library',
-  id = 'org.scala-lang:scala-library:2.11.4',
-  sha1 = '734ac63e470706015ea786f7780c80db49f001a4',
+  id = 'org.scala-lang:scala-library:2.11.6',
+  sha1 = 'be3457b4b748df35bffba675d8cddf44e9df4f7b',
   license = 'Apache2.0',
 )
