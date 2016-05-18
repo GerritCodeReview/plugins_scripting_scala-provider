@@ -3,8 +3,6 @@ Gerrit Scala Provider Plugin
 
 This plugin provides Scala runtime environment for Gerrit plugins in Scala.
 
-To test this series must be applied on top of Gerrit master [1].
-
 To build link this directory under Gerrit's tree plugins directory and run:
 
 ```
@@ -32,5 +30,3 @@ Copy and past the above sample Scala fragment into the file $GERRIT_SITE/plugin/
 
 The "hello" plugin version 1.0 will be automatically loaded into Gerrit and will provide a new
 SSH command "hello scala".
-
-* [1] https://gerrit-review.googlesource.com/#/q/status:open+project:gerrit+branch:master+topic:scripting-reloaded
