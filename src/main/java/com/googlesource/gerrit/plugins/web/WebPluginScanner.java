@@ -13,7 +13,7 @@
 // limitations under the License.
 package com.googlesource.gerrit.plugins.web;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.collect.Lists;
 import com.google.gerrit.server.plugins.InvalidPluginException;
 import com.google.gerrit.server.plugins.PluginContentScanner;
@@ -62,7 +62,7 @@ public class WebPluginScanner implements PluginContentScanner {
     if (Files.exists(resourceFile) && Files.size(resourceFile) > 0) {
       return resourceOf(resourcePath);
     } else {
-      return Optional.absent();
+      return Optional.empty();
     }
   }
 
@@ -78,7 +78,7 @@ public class WebPluginScanner implements PluginContentScanner {
             Optional.of(fileSize)));
       }
     } else {
-      return Optional.absent();
+      return Optional.empty();
     }
   }
 

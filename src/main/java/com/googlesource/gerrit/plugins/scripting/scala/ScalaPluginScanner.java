@@ -13,7 +13,7 @@
 // limitations under the License.
 package com.googlesource.gerrit.plugins.scripting.scala;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.gerrit.server.plugins.AbstractPreloadedPluginScanner;
 import com.google.gerrit.server.plugins.InvalidPluginException;
 import com.google.gerrit.server.plugins.Plugin;
