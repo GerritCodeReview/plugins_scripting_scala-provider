@@ -122,7 +122,7 @@ public class WebPluginScanner implements PluginContentScanner {
             }
           });
     } catch (IOException e) {
-      new IllegalArgumentException("Cannot scan resource files in plugin", e);
+      throw new IllegalArgumentException("Cannot scan resource files in plugin", e);
     }
     return Collections.enumeration(resourcesList);
   }
