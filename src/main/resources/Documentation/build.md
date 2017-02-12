@@ -1,22 +1,36 @@
 Build
 =====
 
-This plugin is built with Buck.
+This plugin is built with Bazel.
 
-Clone or link this plugin to the plugins directory of Gerrit's source
-tree, and issue the command:
+Clone (or link) this plugin to the `plugins` directory of Gerrit's source tree.
+
+Put the external dependency Bazel build file into the Gerrit /plugins directory,
+replacing the existing empty one.
 
 ```
-  buck build plugins/scala-provider
+  cd gerrit/plugins
+  rm external_plugin_deps.bzl
+  ln -s scala-provider/external_plugin_deps.bzl .
 ```
+
+Then issue
+
+```
+  bazel build plugins/scala-provider
+```
+
+in the root of Gerrit's source tree to build
 
 The output is created in
 
 ```
-  buck-out/gen/plugins/scala-provider/scala-provider.jar
+  bazel-genfiles/plugins/scala-provider/scala-provider.jar
 ```
 
-This project can be imported into the Eclipse IDE:
+This project can be imported into the Eclipse IDE.
+Add the plugin name to the `CUSTOM_PLUGINS` set in
+Gerrit core in `tools/bzl/plugins.bzl`, and execute:
 
 ```
   ./tools/eclipse/project.py
