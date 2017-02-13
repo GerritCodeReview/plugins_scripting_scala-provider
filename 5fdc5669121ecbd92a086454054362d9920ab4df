@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "24dbe2c4_fc475cf5",
+        "filename": "BUILD",
+        "patchSetId": 5
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1011323
+      },
+      "writtenOn": "2017-02-13T06:47:14Z",
+      "side": 1,
+      "message": "This should be simplified, and use exports set of maven_jar() that you have added recently, so that this dependency chain can be built:\n\n  java-compiler \u003c\u003d scala-reflect \u003c\u003d scala-library\n\nSo that here, only compiler is specified:\n\n  deps \u003d [\n        \"@scala_compiler//jar\",\n  ]",
+      "range": {
+        "startLine": 14,
+        "startChar": 8,
+        "endLine": 16,
+        "endChar": 30
+      },
+      "revId": "5fdc5669121ecbd92a086454054362d9920ab4df",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "490a1c57_bc46d9ee",
+        "filename": "external_plugin_deps.bzl",
+        "patchSetId": 5
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1011323
+      },
+      "writtenOn": "2017-02-13T06:47:14Z",
+      "side": 1,
+      "message": "exports",
+      "range": {
+        "startLine": 8,
+        "startChar": 4,
+        "endLine": 8,
+        "endChar": 8
+      },
+      "revId": "5fdc5669121ecbd92a086454054362d9920ab4df",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9db3441e_d5be1dfb",
+        "filename": "external_plugin_deps.bzl",
+        "patchSetId": 5
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1011323
+      },
+      "writtenOn": "2017-02-13T06:47:14Z",
+      "side": 1,
+      "message": "exports",
+      "range": {
+        "startLine": 17,
+        "startChar": 4,
+        "endLine": 17,
+        "endChar": 8
+      },
+      "revId": "5fdc5669121ecbd92a086454054362d9920ab4df",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    }
+  ]
+}
