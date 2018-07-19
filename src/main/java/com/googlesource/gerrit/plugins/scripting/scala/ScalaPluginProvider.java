@@ -15,6 +15,7 @@
 package com.googlesource.gerrit.plugins.scripting.scala;
 
 import com.google.gerrit.extensions.annotations.PluginName;
+import com.google.gerrit.server.config.GerritRuntime;
 import com.google.gerrit.server.plugins.InvalidPluginException;
 import com.google.gerrit.server.plugins.ServerPlugin;
 import com.google.gerrit.server.plugins.ServerPluginProvider;
@@ -67,7 +68,9 @@ class ScalaPluginProvider implements ServerPluginProvider {
         snapshot,
         new ScalaPluginScanner(name, srcFile, scriptEngine),
         description.dataDir,
-        scriptEngine.getClassLoader());
+        scriptEngine.getClassLoader(),
+        "scala/" + name,
+        GerritRuntime.DAEMON);
   }
 
   @Override
