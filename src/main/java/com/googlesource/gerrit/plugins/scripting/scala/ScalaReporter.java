@@ -14,14 +14,12 @@
 package com.googlesource.gerrit.plugins.scripting.scala;
 
 import com.google.inject.Inject;
-
-import scala.tools.nsc.reporters.ConsoleReporter;
-import scala.tools.nsc.reporters.Reporter;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import scala.tools.nsc.reporters.ConsoleReporter;
+import scala.tools.nsc.reporters.Reporter;
 
 public class ScalaReporter {
 
@@ -33,8 +31,10 @@ public class ScalaReporter {
   public ScalaReporter(ScalaSettings settings) {
     buffer = new ByteArrayOutputStream();
     consoleReporter =
-        new ConsoleReporter(settings.getSettings(), new BufferedReader(
-            new InputStreamReader(System.in)), new PrintWriter(buffer, true));
+        new ConsoleReporter(
+            settings.getSettings(),
+            new BufferedReader(new InputStreamReader(System.in)),
+            new PrintWriter(buffer, true));
   }
 
   public String getOutput() {

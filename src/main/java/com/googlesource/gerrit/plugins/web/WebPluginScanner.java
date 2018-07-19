@@ -13,13 +13,11 @@
 // limitations under the License.
 package com.googlesource.gerrit.plugins.web;
 
-import java.util.Optional;
 import com.google.common.collect.Lists;
 import com.google.gerrit.server.plugins.InvalidPluginException;
 import com.google.gerrit.server.plugins.PluginContentScanner;
 import com.google.gerrit.server.plugins.PluginEntry;
 import com.google.inject.Inject;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -34,6 +32,7 @@ import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.jar.Manifest;
 
 public class WebPluginScanner implements PluginContentScanner {
@@ -74,8 +73,8 @@ public class WebPluginScanner implements PluginContentScanner {
       if (resourcePath.endsWith("html")) {
         return Optional.of(new PluginEntry(resourcePath, fileLastModifiedTimeMillis));
       } else {
-        return Optional.of(new PluginEntry(resourcePath, fileLastModifiedTimeMillis,
-            Optional.of(fileSize)));
+        return Optional.of(
+            new PluginEntry(resourcePath, fileLastModifiedTimeMillis, Optional.of(fileSize)));
       }
     } else {
       return Optional.empty();
@@ -87,13 +86,12 @@ public class WebPluginScanner implements PluginContentScanner {
   }
 
   @Override
-  public InputStream getInputStream(PluginEntry entry)
-      throws IOException {
+  public InputStream getInputStream(PluginEntry entry) throws IOException {
     String name = entry.getName();
-    if(name.endsWith("html")) {
+    if (name.endsWith("html")) {
       return new SSIPageInputStream(staticResourcesPath, name);
     } else {
-    return Files.newInputStream(getResourceFile(name));
+      return Files.newInputStream(getResourceFile(name));
     }
   }
 
@@ -101,15 +99,16 @@ public class WebPluginScanner implements PluginContentScanner {
   public Enumeration<PluginEntry> entries() {
     final List<PluginEntry> resourcesList = Lists.newArrayList();
     try {
-      Files.walkFileTree(staticResourcesPath,
-          EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,
+      Files.walkFileTree(
+          staticResourcesPath,
+          EnumSet.of(FileVisitOption.FOLLOW_LINKS),
+          Integer.MAX_VALUE,
           new SimpleFileVisitor<Path>() {
-            private int basicPathLength = staticResourcesPath.toAbsolutePath().toString()
-                .length();
+            private int basicPathLength = staticResourcesPath.toAbsolutePath().toString().length();
 
             @Override
-            public FileVisitResult visitFile(Path path,
-                BasicFileAttributes attrs) throws IOException {
+            public FileVisitResult visitFile(Path path, BasicFileAttributes attrs)
+                throws IOException {
               Optional<PluginEntry> resource = resourceOf(relativePathOf(path));
               if (resource.isPresent()) {
                 resourcesList.add(resource.get());
@@ -126,5 +125,4 @@ public class WebPluginScanner implements PluginContentScanner {
     }
     return Collections.enumeration(resourcesList);
   }
-
 }

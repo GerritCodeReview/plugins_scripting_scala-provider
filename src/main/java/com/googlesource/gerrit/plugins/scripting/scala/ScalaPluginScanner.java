@@ -13,27 +13,28 @@
 // limitations under the License.
 package com.googlesource.gerrit.plugins.scripting.scala;
 
-import java.util.Optional;
 import com.google.gerrit.server.plugins.AbstractPreloadedPluginScanner;
 import com.google.gerrit.server.plugins.InvalidPluginException;
 import com.google.gerrit.server.plugins.Plugin;
 import com.google.gerrit.server.plugins.PluginEntry;
-
 import com.googlesource.gerrit.plugins.web.WebPluginScanner;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Enumeration;
+import java.util.Optional;
 import java.util.Set;
 
 public class ScalaPluginScanner extends AbstractPreloadedPluginScanner {
   private final WebPluginScanner webScanner;
 
-  public ScalaPluginScanner(String pluginName, Path srcFile,
-      ScalaPluginScriptEngine scriptEngine) throws InvalidPluginException {
-    super(pluginName, getPluginVersion(srcFile), loadScriptClasses(srcFile,
-        scriptEngine), Plugin.ApiType.PLUGIN);
+  public ScalaPluginScanner(String pluginName, Path srcFile, ScalaPluginScriptEngine scriptEngine)
+      throws InvalidPluginException {
+    super(
+        pluginName,
+        getPluginVersion(srcFile),
+        loadScriptClasses(srcFile, scriptEngine),
+        Plugin.ApiType.PLUGIN);
 
     this.webScanner = new WebPluginScanner(srcFile);
   }
@@ -48,13 +49,12 @@ public class ScalaPluginScanner extends AbstractPreloadedPluginScanner {
     return srcFileName.substring(startPos + 1, endPos);
   }
 
-  private static Set<Class<?>> loadScriptClasses(Path srcFile,
-      ScalaPluginScriptEngine scriptEngine) throws InvalidPluginException {
+  private static Set<Class<?>> loadScriptClasses(Path srcFile, ScalaPluginScriptEngine scriptEngine)
+      throws InvalidPluginException {
     try {
       return scriptEngine.eval(srcFile);
     } catch (ClassNotFoundException | IOException e) {
-      throw new InvalidPluginException(
-          "Cannot evaluate script file " + srcFile, e);
+      throw new InvalidPluginException("Cannot evaluate script file " + srcFile, e);
     }
   }
 

@@ -41,8 +41,15 @@ class LookAheadFileInputStream extends BufferedInputStream {
 
   @Override
   public String toString() {
-    return "pos=" + pos + " count=" + count + " lineNr=" + lineNr
-        + " buffer=\'" + new String(buf, pos, count - pos) + "'";
+    return "pos="
+        + pos
+        + " count="
+        + count
+        + " lineNr="
+        + lineNr
+        + " buffer=\'"
+        + new String(buf, pos, count - pos)
+        + "'";
   }
 
   @Override
@@ -68,8 +75,7 @@ class LookAheadFileInputStream extends BufferedInputStream {
     return numBytes;
   }
 
-  public synchronized boolean startsWith(String includeVirtualPrefix)
-      throws IOException {
+  public synchronized boolean startsWith(String includeVirtualPrefix) throws IOException {
     mark(includeVirtualPrefix.length());
     try {
       byte[] cmp = new byte[includeVirtualPrefix.length()];
@@ -103,5 +109,4 @@ class LookAheadFileInputStream extends BufferedInputStream {
   public Path getCurrentDir() {
     return currentDir;
   }
-
 }

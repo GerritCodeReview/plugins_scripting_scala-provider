@@ -21,30 +21,23 @@ import com.google.gerrit.server.plugins.ServerPluginProvider;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-
-import org.eclipse.jgit.internal.storage.file.FileSnapshot;
-
 import java.nio.file.Path;
+import org.eclipse.jgit.internal.storage.file.FileSnapshot;
 
 /**
  * Scala scripting plugins.
  *
- * Allows to define a Groovy class to implement any type of Gerrit plugin.
+ * <p>Allows to define a Groovy class to implement any type of Gerrit plugin.
  *
- * Example of Scala SSH Plugin (hello-1.0.scala):
+ * <p>Example of Scala SSH Plugin (hello-1.0.scala):
  * ------------------------------------------------ TBD
  *
- * The above example add a "hello scala" command to Gerrit SSH interface that
- * displays "Hello Gerrit from Scala !"
+ * <p>The above example add a "hello scala" command to Gerrit SSH interface that displays "Hello
+ * Gerrit from Scala !"
  *
- * import com.google.gerrit.sshd._
- * import com.google.gerrit.extensions.annotations._
- *
- * @Export("scala")
- * class MyClass extends SshCommand {
- *   override def run = stdout println "Hello Gerrit from Scala!"
- * }
- *
+ * <p>import com.google.gerrit.sshd._ import
+ * com.google.gerrit.extensions.annotations._ @Export("scala") class MyClass extends SshCommand {
+ * override def run = stdout println "Hello Gerrit from Scala!" }
  */
 @Singleton
 class ScalaPluginProvider implements ServerPluginProvider {
@@ -62,14 +55,19 @@ class ScalaPluginProvider implements ServerPluginProvider {
   }
 
   @Override
-  public ServerPlugin get(Path srcFile,
-      FileSnapshot snapshot, PluginDescription description)
+  public ServerPlugin get(Path srcFile, FileSnapshot snapshot, PluginDescription description)
       throws InvalidPluginException {
     ScalaPluginScriptEngine scriptEngine = scriptEngineProvider.get();
     String name = getPluginName(srcFile);
-    return new ServerPlugin(name, description.canonicalUrl, description.user, srcFile,
-        snapshot, new ScalaPluginScanner(name, srcFile, scriptEngine),
-        description.dataDir, scriptEngine.getClassLoader());
+    return new ServerPlugin(
+        name,
+        description.canonicalUrl,
+        description.user,
+        srcFile,
+        snapshot,
+        new ScalaPluginScanner(name, srcFile, scriptEngine),
+        description.dataDir,
+        scriptEngine.getClassLoader());
   }
 
   @Override
@@ -92,4 +90,3 @@ class ScalaPluginProvider implements ServerPluginProvider {
     return providerPluginName;
   }
 }
-

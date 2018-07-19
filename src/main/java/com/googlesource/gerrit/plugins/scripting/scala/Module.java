@@ -21,8 +21,7 @@ public class Module extends AbstractModule {
 
   @Override
   protected void configure() {
-    DynamicSet.bind(binder(), ServerPluginProvider.class).to(
-        ScalaPluginProvider.class);
+    DynamicSet.bind(binder(), ServerPluginProvider.class).to(ScalaPluginProvider.class);
     bind(ScalaSettings.class);
     bind(ScalaReporter.class);
     bind(ScalaPluginScriptEngine.class);

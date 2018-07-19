@@ -20,16 +20,14 @@ import java.nio.file.Path;
 import java.util.Stack;
 
 public class SSIPageInputStream extends FilterInputStream {
-  private static final String INCLUDE_VIRTUAL_PREFIX =
-      "<!--#include virtual=\"";
+  private static final String INCLUDE_VIRTUAL_PREFIX = "<!--#include virtual=\"";
   private static final String INCLUDE_VIRTUAL_SUFFIX = " -->";
 
   private LookAheadFileInputStream currentIs;
   private Stack<LookAheadFileInputStream> fileInputStreamStack;
   private final Path basePath;
 
-  public SSIPageInputStream(Path basePath, String filePath)
-      throws IOException {
+  public SSIPageInputStream(Path basePath, String filePath) throws IOException {
     super(new LookAheadFileInputStream(basePath.resolve(filePath)));
 
     this.basePath = basePath;
@@ -63,9 +61,13 @@ public class SSIPageInputStream extends FilterInputStream {
     fileInputStreamStack.push(currentIs);
     Path inputFile = getFile(includeFileName);
     if (!Files.exists(inputFile)) {
-      throw new IOException("Cannot find file '" + includeFileName
-          + "' included in " + currentIs.getFileName() + ":"
-          + currentIs.getLineNr());
+      throw new IOException(
+          "Cannot find file '"
+              + includeFileName
+              + "' included in "
+              + currentIs.getFileName()
+              + ":"
+              + currentIs.getLineNr());
     }
     currentIs = new LookAheadFileInputStream(inputFile);
     in = currentIs;
@@ -95,8 +97,7 @@ public class SSIPageInputStream extends FilterInputStream {
       last = (char) currentIs.read();
     }
     if (!currentIs.startsWith(INCLUDE_VIRTUAL_SUFFIX)) {
-      throw new IOException("Invalid SHTML include directive at line "
-          + currentIs.getLineNr());
+      throw new IOException("Invalid SHTML include directive at line " + currentIs.getLineNr());
     }
 
     skipAll(INCLUDE_VIRTUAL_SUFFIX.length());
@@ -104,9 +105,7 @@ public class SSIPageInputStream extends FilterInputStream {
   }
 
   private void skipAll(int length) throws IOException {
-    for (long skipped = skip(length);
-        length > 0 && skipped > 0;
-        skipped = skip(length)) {
+    for (long skipped = skip(length); length > 0 && skipped > 0; skipped = skip(length)) {
       length -= skipped;
     }
   }

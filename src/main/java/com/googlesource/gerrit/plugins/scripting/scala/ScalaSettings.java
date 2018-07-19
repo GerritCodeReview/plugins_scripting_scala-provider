@@ -15,13 +15,11 @@ package com.googlesource.gerrit.plugins.scripting.scala;
 
 import com.google.gerrit.server.plugins.PluginLoader;
 import com.google.inject.Inject;
-
+import java.net.URL;
+import java.net.URLClassLoader;
 import scala.Option;
 import scala.reflect.io.VirtualDirectory;
 import scala.tools.nsc.Settings;
-
-import java.net.URL;
-import java.net.URLClassLoader;
 
 public class ScalaSettings {
   private static final String CLASSPATH_DEBUG = "false";
@@ -40,13 +38,14 @@ public class ScalaSettings {
     settings.feature().tryToSetFromPropertyValue("true");
 
     settings.outputDirs().setSingleOutput(initVirtualDirectory());
-    settings.classpath().tryToSetFromPropertyValue(
-        classPathOf(PluginLoader.class) + ":" + classPathOf(this.getClass()));
+    settings
+        .classpath()
+        .tryToSetFromPropertyValue(
+            classPathOf(PluginLoader.class) + ":" + classPathOf(this.getClass()));
   }
 
   private VirtualDirectory initVirtualDirectory() {
-    virtualDirectory =
-        new VirtualDirectory("(memory)", Option.apply((VirtualDirectory) null));
+    virtualDirectory = new VirtualDirectory("(memory)", Option.apply((VirtualDirectory) null));
     return virtualDirectory;
   }
 
@@ -71,5 +70,4 @@ public class ScalaSettings {
   public VirtualDirectory getVirtualDirectory() {
     return virtualDirectory;
   }
-
 }
