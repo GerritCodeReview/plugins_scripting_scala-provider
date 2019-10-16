@@ -25,7 +25,7 @@ in the root of Gerrit's source tree to build
 The output is created in
 
 ```
-  bazel-genfiles/plugins/scala-provider/scala-provider.jar
+  bazel-bin/plugins/scala-provider/scala-provider.jar
 ```
 
 This project can be imported into the Eclipse IDE.
