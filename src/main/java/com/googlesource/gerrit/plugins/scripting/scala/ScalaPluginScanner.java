@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public class ScalaPluginScanner extends AbstractPreloadedPluginScanner {
   private final WebPluginScanner webScanner;
@@ -69,7 +70,7 @@ public class ScalaPluginScanner extends AbstractPreloadedPluginScanner {
   }
 
   @Override
-  public Enumeration<PluginEntry> entries() {
+  public Stream<PluginEntry> entries() {
     return webScanner.entries();
   }
 }

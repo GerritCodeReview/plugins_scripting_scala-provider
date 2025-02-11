@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.jar.Manifest;
+import java.util.stream.Stream;
 
 public class WebPluginScanner implements PluginContentScanner {
   private final Path staticResourcesPath;
@@ -96,7 +97,7 @@ public class WebPluginScanner implements PluginContentScanner {
   }
 
   @Override
-  public Enumeration<PluginEntry> entries() {
+  public Stream<PluginEntry> entries() {
     final List<PluginEntry> resourcesList = Lists.newArrayList();
     try {
       Files.walkFileTree(
@@ -123,6 +124,6 @@ public class WebPluginScanner implements PluginContentScanner {
     } catch (IOException e) {
       throw new IllegalArgumentException("Cannot scan resource files in plugin", e);
     }
-    return Collections.enumeration(resourcesList);
+    return resourcesList.stream();
   }
 }
