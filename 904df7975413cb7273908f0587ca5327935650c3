@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "118858b6_ae1f498e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1072905
+      },
+      "writtenOn": "2025-02-12T08:00:47Z",
+      "side": 1,
+      "message": "@luca.milanesio@gmail.com shall we add a Jenkinsfile for this?",
+      "revId": "904df7975413cb7273908f0587ca5327935650c3",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153"
+    }
+  ]
+}
